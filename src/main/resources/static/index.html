@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="website icon" type="png" href="/images/logo.png">
+    <title>Musi - Hearing Redefined</title>
+    <style>
+:root {
+    --bg-color: linear-gradient(to right, #28313b, #485461);
+    --text-color: #f5f5f5;
+    --sidebar-bg: rgba(0, 0, 0, 0.2);
+    --player-bg: rgba(0, 0, 0, 0.3);
+    --item-bg: rgba(255, 255, 255, 0.1);
+    --item-hover-bg: rgba(255, 255, 255, 0.2);
+    --active-item-bg: rgba(255, 255, 255, 0.3);
+    --button-bg: #5a6a7a;
+    --button-hover-bg: #6e8094;
+    --input-bg: #333;
+    --input-border: #555;
+}
+
+body.light-theme {
+    --bg-color: linear-gradient(to right, #f8f9fa, #e9ecef);
+    --text-color: #495057;
+    --sidebar-bg: rgba(255, 255, 255, 0.6);
+    --player-bg: rgba(255, 255, 255, 0.7);
+    --item-bg: rgba(0, 0, 0, 0.03);
+    --item-hover-bg: rgba(0, 0, 0, 0.06);
+    --active-item-bg: rgba(0, 0, 0, 0.1);
+    --button-bg: #adb5bd;
+    --button-hover-bg: #909da8;
+    --input-bg: #fff;
+    --input-border: #ced4da;
+}
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+        }
+        
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #theme-switcher {
+            cursor: pointer;
+            font-size: 1.5em;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .brand-name {
+            font-family: 'Rockybilly', sans-serif;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .sidebar {
+            width: 100%;
+            background: var(--sidebar-bg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            width: 100%;
+            transition: margin-right 0.3s;
+        }
+
+        .music-player {
+            background-color: var(--player-bg);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        #visualizer {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        #search-results {
+            list-style: none;
+            padding: 0;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        #search-results li {
+            background: var(--item-bg);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .download-btn, .add-local-btn {
+            background: var(--button-bg);
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            box-sizing: border-box;
+            transition: background-color 0.3s;
+        }
+
+        .download-btn:hover, .add-local-btn:hover {
+            background: var(--button-hover-bg);
+        }
+
+        #playlist {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        #playlist li {
+            background-color: var(--item-bg);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #playlist li:hover {
+            background-color: var(--item-hover-bg);
+        }
+
+        #playlist li.active {
+            background-color: var(--active-item-bg);
+        }
+        
+        .track-name-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .now-playing-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: var(--text-color);
+            display: none;
+        }
+        
+        #playlist li.active .now-playing-indicator {
+            display: block;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+        }
+
+        .remove-btn:hover {
+            color: #ff4d4d;
+        }
+        
+        #right-sidebar {
+            width: 80%;
+            max-width: 300px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            box-sizing: border-box;
+            position: fixed;
+            right: -320px; /* Initially hidden */
+            top: 62px; /* Position below nav */
+            height: calc(100vh - 62px);
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            z-index: 1001;
+        }
+        
+        body.light-theme #right-sidebar {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        body.sidebar-open #right-sidebar {
+            right: 0;
+        }
+
+        #playlist-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        #playlist-list li {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .playlist-actions button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        #playlist-list li.active {
+            background-color: var(--active-item-bg);
+        }
+
+        #new-playlist-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--input-border);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        
+        #create-playlist-btn {
+            background: var(--button-bg);
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9em;
+            box-sizing: border-box;
+            transition: background-color 0.3s;
+        }
+
+        #toggle-sidebar-btn {
+            background: none;
+            color: var(--text-color);
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.5em;
+        }
+        
+        #eq-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        #eq-panel {
+            display: none;
+            position: absolute;
+            bottom: 60px; /* Adjust as needed */
+            right: 20px;
+            background: var(--player-bg);
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 1001;
+        }
+
+        .eq-bands {
+            display: flex;
+            gap: 20px;
+        }
+
+        .eq-band {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+     /*   .eq-band input[type=range] {
+           /* -webkit-appearance: slider-vertical;*/
+        
+     
+        
+        .eq-presets {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .eq-preset-btn {
+            background: var(--button-bg);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #audioPlayer {
+            display: none;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        footer {
+            background: var(--sidebar-bg);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            width: 100%;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .track-info {
+            margin-bottom: 10px;
+        }
+
+        .player-controls button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5em;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .player-controls button:hover {
+            color: var(--button-hover-bg);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            width: 150px;
+        }
+
+        #volume-slider {
+            width: 100%;
+        }
+
+        /* Desktop Styles */
+        @media (min-width: 768px) {
+            .container {
+                flex-wrap: nowrap;
+                height: calc(100vh - 62px);
+            }
+            
+            .sidebar {
+                width: 350px;
+                border-right: 1px solid rgba(255, 255, 255, 0.1);
+                border-bottom: none;
+                height: auto;
+            }
+            
+            .main-content {
+                width: auto;
+            }
+
+            body.sidebar-open .main-content {
+                margin-right: 300px;
+            }
+            
+            footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-between;
+                z-index: 1000; 
+            }
+        }
+
+        @media (max-width: 767px) {
+            #eq-panel {
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 350px;
+            }
+            .eq-bands, .eq-presets {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo-container">
+            <div class="logo"><img src="/images/logo.png" alt="" class="logo"></div>
+            <div class="brand-name">Musi</div>
+        </div>
+        <div class="nav-controls">
+            <div id="theme-switcher">&#9728;</div>
+            <button id="toggle-sidebar-btn">&#9776;</button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Search Music</h2>
+            <label for="fileInput" class="add-local-btn">Add from Device</label>
+            <input type="file" id="fileInput" accept="audio/*" multiple>
+            <input type="text" id="search-input" placeholder="Enter song name or artist">
+            <ul id="search-results"></ul>
+        </div>
+
+        <div class="main-content">
+            <div class="music-player">
+                <h1 id="playlist-title">My Playlist</h1>
+                <canvas id="visualizer"></canvas>
+                <ul id="playlist"></ul>
+            </div>
+        </div>
+        
+        <div id="right-sidebar">
+            <h2>Playlists</h2>
+            <ul id="playlist-list"></ul>
+            <input type="text" id="new-playlist-input" placeholder="New playlist name">
+            <button id="create-playlist-btn">Create Playlist</button>
+        </div>
+    </div>
+    
+    <footer>
+        <audio id="audioPlayer" crossorigin="anonymous"></audio>
+        <div class="track-info">
+            <span id="track-name"></span>
+        </div>
+        <div class="player-controls">
+            <button id="prev-btn">&#9664;&#9664;</button>
+            <button id="play-pause-btn">&#9654;</button>
+            <button id="next-btn">&#9654;&#9654;</button>
+        </div>
+        <div class="volume-control">
+            <button id="eq-btn">&#9874;</button>
+            <span>&#128266;</span>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+        </div>
+    </footer>
+    
+    <div id="eq-panel">
+        <div class="eq-bands">
+            <!-- EQ bands will be generated here by script.js -->
+        </div>
+        <div class="eq-presets">
+            <button class="eq-preset-btn" data-preset="flat">Flat</button>
+            <button class="eq-preset-btn" data-preset="bass-boost">Bass Boost</button>
+            <button class="eq-preset-btn" data-preset="vocal-boost">Vocal Boost</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
