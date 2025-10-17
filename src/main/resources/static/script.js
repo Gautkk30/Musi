@@ -14,7 +14,7 @@ const playlistListEl = document.getElementById('playlist-list');
 const newPlaylistInput = document.getElementById('new-playlist-input');
 const createPlaylistBtn = document.getElementById('create-playlist-btn');
 const playlistTitle = document.getElementById('playlist-title');
-const themeSwitcher = document.getElementById('theme-switcher');
+const themeDots = document.querySelectorAll('.theme-dot');
 const visualizer = document.getElementById('visualizer');
 const eqBtn = document.getElementById('eq-btn');
 const eqPanel = document.getElementById('eq-panel');
@@ -134,10 +134,7 @@ function loadFromLocalStorage() {
     }
 
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-        document.body.classList.toggle('light-theme', savedTheme === 'light');
-        themeSwitcher.innerHTML = savedTheme === 'light' ? '&#9790;' : '&#9728;';
-    }
+    setTheme(savedTheme || 'default');
 }
 
 function savePlaylists() {
@@ -357,14 +354,23 @@ function updateActiveTrack() {
 }
 
 // --- UI & THEME --- //
-toggleSidebarBtn.addEventListener('click', () => {
-    document.body.classList.toggle('sidebar-open');
+function setTheme(themeName) {
+    document.body.classList.remove('light-theme', 'deep-blue-theme', 'forest-theme');
+    if (themeName !== 'default') {
+        document.body.classList.add(`${themeName}-theme`);
+    }
+    localStorage.setItem('theme', themeName);
+}
+
+themeDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+        const theme = dot.dataset.theme;
+        setTheme(theme);
+    });
 });
 
-themeSwitcher.addEventListener('click', () => {
-    const isLight = document.body.classList.toggle('light-theme');
-    themeSwitcher.innerHTML = isLight ? '&#9790;' : '&#9728;';
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+toggleSidebarBtn.addEventListener('click', () => {
+    document.body.classList.toggle('sidebar-open');
 });
 
 // --- AUDIO VISUALIZER & EQ --- //
@@ -467,8 +473,19 @@ function renderFrame() {
 
         for (let i = 0; i < bufferLength; i++) {
             barHeight = dataArray[i];
-            const isLight = document.body.classList.contains('light-theme');
-            canvasCtx.fillStyle = isLight ? `rgba(69, 123, 157, ${barHeight / 255})` : `rgb(${barHeight + 25}, 150, 50)`;
+            const isLightTheme = document.body.classList.contains('light-theme');
+            const isDeepBlueTheme = document.body.classList.contains('deep-blue-theme');
+            const isForestTheme = document.body.classList.contains('forest-theme');
+            
+            if (isLightTheme) {
+                 canvasCtx.fillStyle = `rgba(69, 123, 157, ${barHeight / 255})`;
+            } else if (isDeepBlueTheme) {
+                canvasCtx.fillStyle = `rgba(137, 207, 240, ${barHeight / 255})`;
+            } else if (isForestTheme) {
+                canvasCtx.fillStyle = `rgba(113, 178, 128, ${barHeight/255})`;
+            }else {
+                canvasCtx.fillStyle = `rgb(${barHeight + 25}, 150, 50)`;
+            }
             canvasCtx.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
             x += barWidth + 1;
         }

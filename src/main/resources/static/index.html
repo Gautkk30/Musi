@@ -34,6 +34,35 @@ body.light-theme {
     --input-border: #ced4da;
 }
 
+body.deep-blue-theme {
+    --bg-color: linear-gradient(to right, #000428, #004e92);
+    --text-color: #ffffff;
+    --sidebar-bg: rgba(0, 78, 146, 0.2);
+    --player-bg: rgba(0, 78, 146, 0.3);
+    --item-bg: rgba(255, 255, 255, 0.1);
+    --item-hover-bg: rgba(255, 255, 255, 0.2);
+    --active-item-bg: rgba(255, 255, 255, 0.3);
+    --button-bg: #005f9e;
+    --button-hover-bg: #0077c2;
+    --input-bg: #002d50;
+    --input-border: #004e92;
+}
+
+body.forest-theme {
+    --bg-color: linear-gradient(to right, #134E5E, #71B280);
+    --text-color: #ffffff;
+    --sidebar-bg: rgba(19, 78, 94, 0.2);
+    --player-bg: rgba(19, 78, 94, 0.4);
+    --item-bg: rgba(255, 255, 255, 0.15);
+    --item-hover-bg: rgba(255, 255, 255, 0.25);
+    --active-item-bg: rgba(255, 255, 255, 0.35);
+    --button-bg: #3a7c6a;
+    --button-hover-bg: #4c9a85;
+    --input-bg: #0b2e35;
+    --input-border: #134E5E;
+}
+
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-color);
@@ -62,9 +91,23 @@ body.light-theme {
             gap: 20px;
         }
 
-        #theme-switcher {
+        .theme-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
             cursor: pointer;
-            font-size: 1.5em;
+            border: 2px solid var(--text-color);
+            transition: transform 0.2s;
+        }
+
+        .theme-dot:hover {
+            transform: scale(1.2);
         }
 
         .logo-container {
@@ -488,7 +531,12 @@ body.light-theme {
             <div class="brand-name">Musi</div>
         </div>
         <div class="nav-controls">
-            <div id="theme-switcher">&#9728;</div>
+            <div class="theme-selector">
+                <div class="theme-dot" data-theme="default" style="background: linear-gradient(to right, #28313b, #485461);"></div>
+                <div class="theme-dot" data-theme="light" style="background: linear-gradient(to right, #f8f9fa, #e9ecef);"></div>
+                <div class="theme-dot" data-theme="deep-blue" style="background: linear-gradient(to right, #000428, #004e92);"></div>
+                <div class="theme-dot" data-theme="forest" style="background: linear-gradient(to right, #134E5E, #71B280);"></div>
+            </div>
             <button id="toggle-sidebar-btn">&#9776;</button>
         </div>
     </nav>
