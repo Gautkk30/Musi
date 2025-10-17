@@ -14,6 +14,8 @@ const playlistListEl = document.getElementById('playlist-list');
 const newPlaylistInput = document.getElementById('new-playlist-input');
 const createPlaylistBtn = document.getElementById('create-playlist-btn');
 const playlistTitle = document.getElementById('playlist-title');
+const themeSelectorButton = document.getElementById('theme-selector-button');
+const themePanel = document.getElementById('theme-panel');
 const themeDots = document.querySelectorAll('.theme-dot');
 const visualizer = document.getElementById('visualizer');
 const eqBtn = document.getElementById('eq-btn');
@@ -32,7 +34,11 @@ const FREQUENCIES = [60, 310, 1000, 3000, 6000];
 const PRESETS = {
     'flat': [0, 0, 0, 0, 0],
     'bass-boost': [8, 5, 0, 0, 0],
-    'vocal-boost': [0, 0, 5, 5, 0]
+    'vocal-boost': [0, 0, 5, 5, 0],
+    'rock': [5, -2, -3, 2, 4],
+    'pop': [-2, 4, 5, 1, -3],
+    'electronic': [6, 3, -2, 4, 3],
+    'acoustic': [4, 2, 0, 3, 2]
 };
 
 // --- DATABASE --- //
@@ -211,7 +217,6 @@ function deletePlaylist(playlistName) {
         return;
     }
     if (confirm(`Are you sure you want to delete the playlist "'${playlistName}'"?`)) {
-        // Before deleting playlist, remove associated songs from DB
         const tracksToDelete = playlists[playlistName] || [];
         tracksToDelete.forEach(track => {
             if (track.dbId) {
@@ -236,8 +241,8 @@ function switchPlaylist(playlistName) {
     trackNameEl.textContent = '';
     playPauseBtn.innerHTML = '&#9654;';
     savePlaylists();
-    loadFromLocalStorage(); // Reload local storage for the new playlist
-    loadSongsFromDB(); // Reload DB songs for the new playlist
+    loadFromLocalStorage(); 
+    loadSongsFromDB();
     renderPlaylists();
     document.body.classList.remove('sidebar-open');
 }
@@ -320,7 +325,6 @@ function removeTrack(trackIndex) {
         audioPlayer.src = '';
         trackNameEl.textContent = '';
         playPauseBtn.innerHTML = '&#9654;';
-        // Optional: play next track
         if(playlists[activePlaylist].length > 0) {
             playTrack(currentTrack % playlists[activePlaylist].length);
         } 
@@ -355,16 +359,21 @@ function updateActiveTrack() {
 
 // --- UI & THEME --- //
 function setTheme(themeName) {
-    document.body.classList.remove('light-theme', 'deep-blue-theme', 'forest-theme');
+    document.body.className = '';
     if (themeName !== 'default') {
         document.body.classList.add(`${themeName}-theme`);
     }
     localStorage.setItem('theme', themeName);
 }
 
+themeSelectorButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    themePanel.classList.toggle('visible');
+});
+
 themeDots.forEach(dot => {
-    dot.addEventListener('click', () => {
-        const theme = dot.dataset.theme;
+    dot.addEventListener('click', (e) => {
+        const theme = e.target.dataset.theme;
         setTheme(theme);
     });
 });
@@ -473,17 +482,15 @@ function renderFrame() {
 
         for (let i = 0; i < bufferLength; i++) {
             barHeight = dataArray[i];
-            const isLightTheme = document.body.classList.contains('light-theme');
-            const isDeepBlueTheme = document.body.classList.contains('deep-blue-theme');
-            const isForestTheme = document.body.classList.contains('forest-theme');
             
-            if (isLightTheme) {
+            const theme = document.body.className;
+            if (theme.includes('light-theme')) {
                  canvasCtx.fillStyle = `rgba(69, 123, 157, ${barHeight / 255})`;
-            } else if (isDeepBlueTheme) {
-                canvasCtx.fillStyle = `rgba(137, 207, 240, ${barHeight / 255})`;
-            } else if (isForestTheme) {
-                canvasCtx.fillStyle = `rgba(113, 178, 128, ${barHeight/255})`;
-            }else {
+            } else if (theme.includes('graphite-theme')) {
+                canvasCtx.fillStyle = `rgba(0, 123, 255, ${barHeight / 255})`;
+            } else if (theme.includes('latte-theme')) {
+                canvasCtx.fillStyle = `rgba(141, 110, 99, ${barHeight/255})`;
+            } else {
                 canvasCtx.fillStyle = `rgb(${barHeight + 25}, 150, 50)`;
             }
             canvasCtx.fillRect(x, height - barHeight / 2, barWidth, barHeight / 2);
@@ -542,7 +549,7 @@ function handleDragEnd() {
 // --- EVENT LISTENERS & INITIALIZATION --- //
 searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        e.preventDefault(); // Prevent form submission
+        e.preventDefault(); 
         searchSongs(e.target.value);
     }
 });
@@ -552,7 +559,7 @@ fileInput.addEventListener('change', function() {
     for (const file of files) {
         saveSongToDB(file);
     }
-    this.value = ''; // Reset file input
+    this.value = '';
 });
 
 
@@ -607,7 +614,7 @@ audioPlayer.addEventListener('ended', () => {
 });
 
 document.addEventListener('keydown', e => {
-    if (e.target.tagName === 'INPUT') return; // Ignore shortcuts when typing
+    if (e.target.tagName === 'INPUT') return;
     switch (e.code) {
         case 'Space':
             e.preventDefault();
@@ -626,6 +633,9 @@ document.addEventListener('keydown', e => {
 });
 
 document.addEventListener('click', (e) => {
+    if (themePanel.classList.contains('visible') && !themePanel.contains(e.target) && !themeSelectorButton.contains(e.target)) {
+        themePanel.classList.remove('visible');
+    }
     if (eqPanel.style.display === 'block' && !eqPanel.contains(e.target) && !eqBtn.contains(e.target)) {
         eqPanel.style.display = 'none';
     }
