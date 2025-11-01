@@ -146,13 +146,20 @@ function loadFromLocalStorage() {
 function savePlaylists() {
     const playlistsToSave = JSON.parse(JSON.stringify(playlists));
     for (const playlistName in playlistsToSave) {
-        playlistsToSave[playlistName] = playlistsToSave[playlistName].filter(track => !track.src.startsWith('blob:'));
+        playlistsToSave[playlistName] = playlistsToSave[playlistName].map(track => {
+             // Don't store blob URLs in local storage
+            if (track.src.startsWith('blob:')) {
+                const { src, ...rest } = track;
+                return rest; 
+            }
+            return track;
+        });
     }
     localStorage.setItem('playlists', JSON.stringify(playlistsToSave));
     localStorage.setItem('activePlaylist', activePlaylist);
 }
 
-// --- PLAYLIST MANAGEMENT --- //
+ 
 function renderPlaylists() {
     playlistListEl.innerHTML = '';
     for (const playlistName in playlists) {
@@ -170,7 +177,7 @@ function renderPlaylists() {
         renameBtn.innerHTML = '&#9998;'; // Pencil icon
         renameBtn.onclick = (e) => {
             e.stopPropagation();
-            renamePlaylist(playlistName);
+            renamePlaylist(oldName);
         };
         
         const deleteBtn = document.createElement('button');
@@ -303,7 +310,11 @@ function addToPlaylist(song) {
     if (!playlists[activePlaylist]) {
         playlists[activePlaylist] = [];
     }
-    playlists[activePlaylist].push({ name: song.trackName, src: song.previewUrl });
+
+    playlists[activePlaylist].push({ 
+        name: song.trackName, 
+        src: song.previewUrl,
+    });
     savePlaylists();
     renderTracks();
     if (playlists[activePlaylist].length === 1) {
