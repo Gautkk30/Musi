@@ -35,11 +35,23 @@ Open `index.html` or run using Live Server.
 
 ---
 
-## Screenshots
-
-(Add 3–5 screenshots here)
-
 ---
+
+# 📸 Screenshots
+
+<p align="center">
+  <img src="screenshots/hero.png" width="900">
+</p>
+
+<p align="center">
+  <img src="screenshots/player.png" width="48%">
+  <img src="screenshots/playlist.png" width="48%">
+</p>
+
+<p align="center">
+  <img src="screenshots/dark-theme.png" width="48%">
+  <img src="screenshots/light-theme.png" width="48%">
+</p>
 
 ## Future Improvements
 
