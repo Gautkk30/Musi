@@ -1,10 +1,50 @@
-# Java API Service Starter
+# 🎵 Musi
 
-This is a minimal Java API service starter based on [Google Cloud Run Quickstart](https://cloud.google.com/run/docs/quickstarts/build-and-deploy/deploy-java-service).
+A modern, responsive music streaming web application with an elegant interface and seamless listening experience.
 
-## Getting Started
+## 🌐 Live Demo
 
-Server should run automatically when starting a workspace. To run manually, run:
-```sh
-mvn spring-boot:run
+👉 https://musi-6ak0.onrender.com/
+
+---
+
+## Features
+
+- 🎧 Music Search
+- ▶️ Audio Playback
+- 📂 Playlist Management
+- 🎚️ Built-in Equalizer
+- 🎨 Multiple Themes
+- 📱 Fully Responsive Design
+
+## Tech Stack
+
+- HTML
+- CSS
+- JavaScript
+- iTunes Search API
+
+## Installation
+
+```bash
+git clone https://github.com/Gautkk30/Musi.git
+cd Musi
 ```
+
+Open `index.html` or run using Live Server.
+
+---
+
+## Screenshots
+
+(Add 3–5 screenshots here)
+
+---
+
+## Future Improvements
+
+- User Authentication
+- Favorite Songs
+- Lyrics Support
+- Offline Playback
+- PWA Support
